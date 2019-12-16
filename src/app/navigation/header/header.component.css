@@ -12,3 +12,7 @@ a:hover {
   margin: 0;
   padding: 0;
 }
+
+ul:last-child a {
+  cursor: pointer;
+}

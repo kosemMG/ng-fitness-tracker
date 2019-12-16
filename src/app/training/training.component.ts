@@ -1,16 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from "rxjs";
+
+import { TrainingService } from "./training.service";
 
 @Component({
   selector: 'app-training',
   templateUrl: './training.component.html',
   styleUrls: ['./training.component.css']
 })
-export class TrainingComponent implements OnInit {
-  ongoingTraining = false;
+export class TrainingComponent implements OnInit, OnDestroy {
+  public ongoingTraining = false;
+  private exerciseSubscription: Subscription;
 
-  constructor() { }
+  constructor(private trainingService: TrainingService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.exerciseSubscription = this.trainingService.exerciseSwitched
+      .subscribe(exercise => this.ongoingTraining = !!exercise);
   }
 
+  ngOnDestroy(): void {
+    this.exerciseSubscription.unsubscribe();
+  }
 }

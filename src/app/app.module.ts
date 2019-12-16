@@ -42,7 +42,6 @@ import { StopTrainingComponent } from "./training/current-training/stop-training
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
   bootstrap: [AppComponent],
   entryComponents: [StopTrainingComponent]
 })
