@@ -10,6 +10,8 @@
       <input type="password" matInput formControlName="password" placeholder="Your password">
       <mat-error>The field must not be empty.</mat-error>
     </mat-form-field>
-    <button type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid">Login</button>
+    <button *ngIf="!isLoading" type="submit" mat-raised-button color="primary"
+            [disabled]="loginForm.invalid">Login</button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
   </form>
 </section>
