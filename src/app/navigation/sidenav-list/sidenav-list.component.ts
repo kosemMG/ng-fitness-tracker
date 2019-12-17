@@ -10,8 +10,8 @@ import { AuthService } from "../../auth/auth.service";
 })
 export class SidenavListComponent implements OnInit, OnDestroy {
   @Output() sidenavClose = new EventEmitter<void>();
+  public isAuth = false;
   private authSubscription: Subscription;
-  private isAuth = false;
 
   constructor(private authService: AuthService) { }
 

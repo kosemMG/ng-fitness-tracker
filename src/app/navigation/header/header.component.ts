@@ -10,7 +10,7 @@ import { AuthService } from "../../auth/auth.service";
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   @Output() sidenavToggle = new EventEmitter<void>();
-  private isAuth = false;
+  public isAuth = false;
   private authSubscription: Subscription;
 
   constructor(private authService: AuthService) { }
