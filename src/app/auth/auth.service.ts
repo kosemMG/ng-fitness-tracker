@@ -2,47 +2,62 @@ import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 import { Router } from '@angular/router'
 
-import { User } from "./user.model";
+import { AngularFireAuth } from 'angularfire2/auth';
+
+import { TrainingService } from "../training/training.service";
 import { AuthData } from "./auth-data.model";
+import {error, log} from "util";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   authChange = new Subject<boolean>();
-  private user: User;
+  private isAuthenticated = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router,
+              private afAuth: AngularFireAuth,
+              private trainingService: TrainingService) {
+  }
+
+  initAuthListener() {
+    this.afAuth.authState
+      .subscribe(user => {
+        if (user) {
+          this.isAuthenticated = true;
+          this.authChange.next(true);
+          this.redirect('training');
+        } else {
+          this.trainingService.cancelFirebaseSubscriptions();
+          this.isAuthenticated = false;
+          this.authChange.next(false);
+          this.redirect('login');
+        }
+      });
   }
 
   registerUser(authData: AuthData): void {
-    this.user = {
-      email: authData.email,
-      userId: Math.round(Math.random() * 10000).toString()
-    };
-    this.authChange.next(true);
-    this.redirect('training');
+    this.afAuth.auth
+      .createUserWithEmailAndPassword(authData.email, authData.password)
+      .then(() => {
+        this.isAuthenticated = true;
+        this.authChange.next(true);
+        this.redirect('training');
+      })
+      .catch(error => console.log('AuthService registerUser() - ERROR:', error));
   }
 
   login(authData: AuthData): void {
-    this.user = {
-      email: authData.email,
-      userId: Math.round(Math.random() * 10000).toString()
-    };
-    this.authChange.next(true);
-    this.redirect('training');
+    this.afAuth.auth
+      .signInWithEmailAndPassword(authData.email, authData.password)
+      .catch(error => console.log('AuthService login() - ERROR:', error));
   }
 
   logout(): void {
-    this.user = null;
-    this.authChange.next(false);
-    this.redirect('login');
-  }
-
-  getUser(): User {
-    return { ...this.user };
+    this.afAuth.auth.signOut()
+      .catch(error => console.log('AuthService logout() - ERROR:', error));
   }
 
   isAuth(): boolean {
-    return this.user != null;
+    return this.isAuthenticated;
   }
 
   private redirect(...path: string[]): void {
