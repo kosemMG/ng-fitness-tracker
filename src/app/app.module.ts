@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { MaterialModule } from "./material.module";
 import { AuthModule } from "./auth/auth.module";
 import { TrainingModule } from "./training/training.module";
+import { AuthRoutingModule } from "./auth/auth-routing.module";
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { HeaderComponent } from './navigation/header/header.component';
@@ -25,6 +26,7 @@ import { environment } from "../environments/environment";
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AuthRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
     FlexLayoutModule,
