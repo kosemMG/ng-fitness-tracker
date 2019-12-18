@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+// import { Subject } from 'rxjs';
 import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({ providedIn: 'root' })
 export class UIService {
-  public loadedStateChange = new Subject<boolean>();
+  // public loadedStateChange = new Subject<boolean>();
 
   constructor(private snackbar: MatSnackBar) {
   }
