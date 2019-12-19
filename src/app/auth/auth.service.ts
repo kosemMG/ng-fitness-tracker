@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+// import { Subject } from "rxjs";
 import { Router } from '@angular/router'
 
 import { AngularFireAuth } from 'angularfire2/auth';
@@ -10,11 +10,12 @@ import { UIService } from "../shared/ui.service";
 import { AuthData } from "./auth-data.model";
 import * as fromRoot from '../app.reducer';
 import * as UI from '../shared/ui.actions';
+import * as Auth from './auth.actions';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  authChange = new Subject<boolean>();
-  private isAuthenticated = false;
+  // authChange = new Subject<boolean>();
+  // private isAuthenticated = false;
 
   constructor(private router: Router,
               private afAuth: AngularFireAuth,
@@ -27,13 +28,15 @@ export class AuthService {
     this.afAuth.authState
       .subscribe(user => {
         if (user) {
-          this.isAuthenticated = true;
-          this.authChange.next(true);
+          this.store.dispatch(new Auth.SetAuthenticated());
+          // this.isAuthenticated = true;
+          // this.authChange.next(true);
           this.redirect('training');
         } else {
           this.trainingService.cancelFirebaseSubscriptions();
-          this.isAuthenticated = false;
-          this.authChange.next(false);
+          this.store.dispatch(new Auth.SetUnauthenticated());
+          // this.isAuthenticated = false;
+          // this.authChange.next(false);
           this.redirect('login');
         }
       });
@@ -72,9 +75,9 @@ export class AuthService {
       .catch(error => console.log('AuthService logout() - ERROR:', error));
   }
 
-  isAuth(): boolean {
-    return this.isAuthenticated;
-  }
+  // isAuth(): boolean {
+  //   return this.isAuthenticated;
+  // }
 
   private redirect(...path: string[]): void {
     this.router.navigate(path)
