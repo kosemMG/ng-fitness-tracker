@@ -5,8 +5,8 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { AngularFireModule } from "angularfire2";
 import { AngularFirestoreModule } from 'angularfire2/firestore';
-
 import { StoreModule } from "@ngrx/store";
+
 import { AppRoutingModule } from './app-routing.module';
 import { MaterialModule } from "./material.module";
 import { AuthModule } from "./auth/auth.module";

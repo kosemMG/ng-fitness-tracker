@@ -1,51 +1,53 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from "@angular/material/dialog";
-import { Subscription } from "rxjs";
+import { take } from 'rxjs/operators';
+
+import { Store } from "@ngrx/store";
 
 import { StopTrainingComponent } from "./stop-training.component";
 import { TrainingService } from "../training.service";
 import { Exercise } from "../exercise.model";
+import * as fromTraining from '../training.reducer';
+import * as Training from '../training.actions';
 
 @Component({
   selector: 'app-current-training',
   templateUrl: './current-training.component.html',
   styleUrls: ['./current-training.component.css']
 })
-export class CurrentTrainingComponent implements OnInit, OnDestroy {
-  progress = 0;
-  timer: number;
-  private runningExercise: Exercise;
-  private exerciseSubscription: Subscription;
+export class CurrentTrainingComponent implements OnInit {
+  public progress = 0;
+  private timer: number;
+  // private exerciseSubscription: Subscription;
 
   constructor(private dialog: MatDialog,
-              private trainingService: TrainingService) { }
+              private trainingService: TrainingService,
+              private store: Store<fromTraining.State>) { }
 
   ngOnInit(): void {
-    this.exerciseSubscription = this.trainingService.exerciseSwitched
-      .subscribe(exercise => {
-        console.log('CurrentTrainingComponent runningExercise:', exercise);
-        if (exercise) {
-          this.runningExercise = exercise;
-        }
-      });
+    // this.exerciseSubscription = this.trainingService.exerciseSwitched
+    //   .subscribe(exercise => {
+    //     console.log('CurrentTrainingComponent runningExercise:', exercise);
+    //     if (exercise) {
+    //       this.runningExercise = exercise;
+    //     }
+    //   });
     this._startOrResumeTimer();
   }
 
-  ngOnDestroy(): void {
-    if (this.exerciseSubscription) {
-      this.exerciseSubscription.unsubscribe();
-    }
-  }
-
   private _startOrResumeTimer(): void {
-    const stepTime = this.trainingService.currentExercise.duration / 100 * 1000;
-    this.timer = setInterval(() => {
-      this.progress++;
-      if (this.progress >= 100) {
-        this.trainingService.completeExercise();
-        clearInterval(this.timer);
-      }
-    }, stepTime);
+    this.store.select(fromTraining.getActiveTraining)
+      .pipe(take(1))
+      .subscribe((exercise: Exercise) => {
+        const stepTime = exercise.duration / 100 * 1000;
+        this.timer = setInterval(() => {
+          this.progress++;
+          if (this.progress >= 100) {
+            this.trainingService.completeExercise();
+            clearInterval(this.timer);
+          }
+        }, stepTime);
+      });
   }
 
   onStopTimer() {
